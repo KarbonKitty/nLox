@@ -68,7 +68,7 @@ namespace NLox
                     '=' => Match('=') ? TokenType.DoubleEqual : TokenType.Equal,
                     '<' => Match('=') ? TokenType.LessOrEqual : TokenType.Less,
                     '>' => Match('=') ? TokenType.GreaterOrEqual : TokenType.Greater,
-                    '/' => Match('/') ? Comment() : TokenType.Slash,
+                    '/' => Match('/') ? Comment() : Match('*') ? BlockComment() : TokenType.Slash,
                     ' ' => null,
                     '\r' => null,
                     '\t' => null,
@@ -185,6 +185,29 @@ namespace NLox
             {
                 Advance();
             }
+            return null;
+        }
+
+        private TokenType? BlockComment()
+        {
+            while (!(Peek() == '*' && PeekNext() == '/'))
+            {
+                if (current >= source.Length)
+                {
+                    throw new Exception("Unterminated block comment");
+                }
+
+                if (Peek() == '\n')
+                {
+                    line++;
+                }
+                Advance();
+            }
+
+            // consume closing '*/'
+            Advance();
+            Advance();
+
             return null;
         }
 
