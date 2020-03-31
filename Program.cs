@@ -9,7 +9,8 @@ namespace NLox
 
         private static int Main(string[] args)
         {
-            return args.Length switch {
+            return args.Length switch
+            {
                 var n when n > 1 => DisplayHelp(),
                 1 => RunFile(args[0]),
                 _ => RunPrompt()
@@ -41,7 +42,7 @@ namespace NLox
 
         private static int Run(string source)
         {
-            var scanner = new Scanner(source);
+            var scanner = new Scanner.Scanner(source);
             var tokens = scanner.ScanTokens();
 
             foreach (var token in tokens)

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace NLox
+namespace NLox.Scanner
 {
     public class Scanner
     {
