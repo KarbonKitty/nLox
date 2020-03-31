@@ -36,7 +36,7 @@ namespace NLox.Scanner
             this.source = source;
         }
 
-        internal List<Token> ScanTokens()
+        public List<Token> ScanTokens()
         {
             while (current < source.Length)
             {

@@ -1,6 +1,6 @@
 namespace NLox.Scanner
 {
-    internal enum TokenType
+    public enum TokenType
     {
         // single-character tokens
         LeftParen,
