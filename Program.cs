@@ -8,6 +8,7 @@ namespace NLox
     internal static class Program
     {
         private static bool hadError = false;
+        private static bool hadRuntimeError = false;
 
         private static int Main(string[] args)
         {
@@ -49,9 +50,11 @@ namespace NLox
             var parser = new Parser(tokens);
             var expr = parser.Parse();
 
-            if (hadError) return -1;
+            if (hadError) return 65;
 
-            Console.WriteLine(AstPrinter.Print(expr));
+            Console.WriteLine(Interpreter.Interpret(expr));
+
+            if (hadRuntimeError) return 70;
 
             return 0;
         }
@@ -71,6 +74,12 @@ namespace NLox
             {
                 Report(token.Line, $" at '{token.Lexeme}'", message);
             }
+        }
+
+        public static void RuntimeError(RuntimeException rex)
+        {
+            Console.WriteLine($"{rex.Message}\n[line {rex.token.Line}]");
+            hadRuntimeError = true;
         }
 
         private static void Report(int line, string where, string message)
