@@ -48,11 +48,11 @@ namespace NLox
             var scanner = new Scanner.Scanner(source);
             var tokens = scanner.ScanTokens();
             var parser = new Parser(tokens);
-            var expr = parser.Parse();
+            var stmts = parser.Parse();
 
             if (hadError) return 65;
 
-            Console.WriteLine(Interpreter.Interpret(expr));
+            Interpreter.Interpret(stmts);
 
             if (hadRuntimeError) return 70;
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using NLox.AST;
 using NLox.Scanner;
 
@@ -6,10 +7,45 @@ namespace NLox
 {
     public static class Interpreter
     {
-        public static object Interpret(Expr expression) => expression switch
+        public static object Interpret(List<Stmt> statements)
+        {
+            try
+            {
+                foreach (var statement in statements)
+                {
+                    Execute(statement);
+                }
+            }
+            catch (RuntimeException rex)
+            {
+                Program.RuntimeError(rex);
+            }
+            return 0;
+        }
+
+        private static void Execute(Stmt statement)
+        {
+            if (statement is PrintStmt p)
+            {
+                Print(p.expression);
+                return;
+            }
+            if (statement is ExpressionStmt e)
+            {
+                Discard(e.expression);
+                return;
+            }
+            throw new RuntimeException("Unknown statement type.");
+        }
+
+        private static void Discard(Expr expression) => Evaluate(expression);
+
+        private static void Print(Expr expression) => Console.WriteLine(Evaluate(expression));
+
+        private static object Evaluate(Expr expression) => expression switch
         {
             BinaryExpr b => Binary(b),
-            GroupingExpr g => Interpret(g.Expression),
+            GroupingExpr g => Evaluate(g.Expression),
             LiteralExpr l => l.Value,
             UnaryExpr u => Unary(u),
             _ => throw new ArgumentException(nameof(expression))
@@ -17,7 +53,7 @@ namespace NLox
 
         private static object Unary(UnaryExpr unary)
         {
-            object right = Interpret(unary);
+            object right = Evaluate(unary);
 
             static double TryNegate(Token token, object o)
             {
@@ -35,8 +71,8 @@ namespace NLox
 
         private static object Binary(BinaryExpr binary)
         {
-            object left = Interpret(binary.Left);
-            object right = Interpret(binary.Right);
+            object left = Evaluate(binary.Left);
+            object right = Evaluate(binary.Right);
 
             static TResult TryTypeAndOperate<TOperand, TResult>(Token token, object l, object r, Func<TOperand, TOperand, TResult> operation)
             {
@@ -44,7 +80,8 @@ namespace NLox
                 return operation(left, right);
             }
 
-            return binary.Operator.Type switch {
+            return binary.Operator.Type switch
+            {
                 TokenType.Minus => TryTypeAndOperate<double, double>(binary.Operator, left, right, (l, r) => l - r),
                 TokenType.Slash => TryTypeAndOperate<double, double>(binary.Operator, left, right, (l, r) => l / r),
                 TokenType.Star => TryTypeAndOperate<double, double>(binary.Operator, left, right, (l, r) => l * r),
@@ -92,7 +129,7 @@ namespace NLox
             throw new RuntimeException(token, $"Operand must be of type {typeof(T)}.");
         }
 
-        private static (T,T) CheckTypeBinary<T>(Token token, object l, object r)
+        private static (T, T) CheckTypeBinary<T>(Token token, object l, object r)
         {
             if (l is T lt && r is T rt)
             {
