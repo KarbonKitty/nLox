@@ -20,10 +20,41 @@ namespace NLox
 
             while (!IsAtEnd())
             {
-                statements.Add(Statement());
+                statements.Add(Declaration());
             }
 
             return statements;
+        }
+
+        private Stmt Declaration()
+        {
+            try
+            {
+                if (Match(TokenType.Var))
+                {
+                    return VarDeclaration();
+                }
+                return Statement();
+            }
+            catch (ParseException)
+            {
+                Synchronize();
+                return null;
+            }
+        }
+
+        private Stmt VarDeclaration()
+        {
+            var name = Consume(TokenType.Identifier, "Expect variable name.");
+
+            Expr initializer = null;
+            if (Match(TokenType.Equal))
+            {
+                initializer = Expression();
+            }
+
+            Consume(TokenType.Semicolon, "Expect ';' after variable declaration.");
+            return new VarStmt(name, initializer);
         }
 
         private Stmt Statement()
@@ -141,6 +172,11 @@ namespace NLox
             if (Match(TokenType.Number, TokenType.String))
             {
                 return new LiteralExpr(Previous().Literal);
+            }
+
+            if (Match(TokenType.Identifier))
+            {
+                return new VarExpr(Previous());
             }
 
             if (Match(TokenType.LeftParen))

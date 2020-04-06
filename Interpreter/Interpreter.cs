@@ -7,6 +7,8 @@ namespace NLox
 {
     public static class Interpreter
     {
+        private static readonly Environment env = new Environment();
+
         public static object Interpret(List<Stmt> statements)
         {
             try
@@ -30,6 +32,13 @@ namespace NLox
                 Print(p.expression);
                 return;
             }
+            if (statement is VarStmt s)
+            {
+                object value = s.initializer is null ? null : Evaluate(s.initializer);
+
+                env.Define(s.name.Lexeme, value);
+                return;
+            }
             if (statement is ExpressionStmt e)
             {
                 Discard(e.expression);
@@ -48,6 +57,7 @@ namespace NLox
             GroupingExpr g => Evaluate(g.Expression),
             LiteralExpr l => l.Value,
             UnaryExpr u => Unary(u),
+            VarExpr v => env.Get(v.Name),
             _ => throw new ArgumentException(nameof(expression))
         };
 

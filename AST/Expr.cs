@@ -51,4 +51,14 @@ namespace NLox.AST
             Expression = expression;
         }
     }
+
+    public class VarExpr : Expr
+    {
+        public Token Name { get; }
+
+        public VarExpr(Token name)
+        {
+            Name = name;
+        }
+    }
 }

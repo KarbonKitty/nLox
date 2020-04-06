@@ -1,3 +1,5 @@
+using NLox.Scanner;
+
 namespace NLox.AST
 {
     public abstract class Stmt { }
@@ -19,6 +21,18 @@ namespace NLox.AST
         public PrintStmt(Expr expression)
         {
             this.expression = expression;
+        }
+    }
+
+    public class VarStmt : Stmt
+    {
+        public readonly Token name;
+        public readonly Expr initializer;
+
+        public VarStmt(Token name, Expr initializer)
+        {
+            this.name = name;
+            this.initializer = initializer;
         }
     }
 }
