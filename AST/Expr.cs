@@ -61,4 +61,16 @@ namespace NLox.AST
             Name = name;
         }
     }
+
+    public class AssignmentExpr : Expr
+    {
+        public Token Name { get; }
+        public Expr Value { get; }
+
+        public AssignmentExpr(Token name, Expr value)
+        {
+            Name = name;
+            Value = value;
+        }
+    }
 }

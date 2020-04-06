@@ -12,5 +12,16 @@ namespace NLox
         public object Get(Token name) => values.ContainsKey(name.Lexeme)
             ? values[name.Lexeme]
             : throw new RuntimeException(name, $"Undefined variable '{name.Lexeme}'.");
+
+        public object Assign(Token name, object value)
+        {
+            if (values.ContainsKey(name.Lexeme))
+            {
+                values[name.Lexeme] = value;
+                return value;
+            }
+
+            throw new RuntimeException(name, $"Undefined variable '{name.Lexeme}'.");
+        }
     }
 }

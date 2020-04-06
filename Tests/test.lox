@@ -5,4 +5,10 @@ print 2 + 1;
 
 var a = 1;
 var b = 2;
+print "Should be 3:";
 print a + b;
+
+a = 4;
+b = 8;
+print "Should be 32:";
+print a * b;

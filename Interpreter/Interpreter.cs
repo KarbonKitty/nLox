@@ -58,6 +58,7 @@ namespace NLox
             LiteralExpr l => l.Value,
             UnaryExpr u => Unary(u),
             VarExpr v => env.Get(v.Name),
+            AssignmentExpr a => env.Assign(a.Name, Evaluate(a.Value)),
             _ => throw new ArgumentException(nameof(expression))
         };
 

@@ -83,7 +83,33 @@ namespace NLox
 
         private Expr Expression()
         {
-            return Equality();
+            return Assignment();
+        }
+
+        private Expr Assignment()
+        {
+            var expr = Equality();
+
+            if (Match(TokenType.Equal))
+            {
+                // store token to allow error reporting
+                var equals = Previous();
+                // right-associative, so we call rule recursively
+                var value = Assignment();
+
+                // ensure that whatever we have parsed first is l-value...
+                if (expr is VarExpr v)
+                {
+                    // ...and actually convert it to l-value...
+                    var name = v.Name;
+                    return new AssignmentExpr(name, value);
+                }
+
+                // ...or report error.
+                Error(equals, "Invalid assignment target.");
+            }
+
+            return expr;
         }
 
         private Expr Equality()
