@@ -54,7 +54,7 @@ namespace NLox
             }
 
             Consume(TokenType.Semicolon, "Expect ';' after variable declaration.");
-            return new VarStmt(name, initializer);
+            return new VariableStmt(name, initializer);
         }
 
         private Stmt Statement()
@@ -63,8 +63,25 @@ namespace NLox
             {
                 return PrintStatement();
             }
+            if (Match(TokenType.LeftBrace))
+            {
+                return new BlockStmt(Block());
+            }
 
             return ExpressionStatement();
+        }
+
+        private List<Stmt> Block()
+        {
+            var statements = new List<Stmt>();
+
+            while (!Check(TokenType.RightBrace) && !IsAtEnd())
+            {
+                statements.Add(Declaration());
+            }
+
+            Consume(TokenType.RightBrace, "Expect '}' after block.");
+            return statements;
         }
 
         private Stmt PrintStatement()

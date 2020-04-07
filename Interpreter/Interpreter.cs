@@ -7,7 +7,7 @@ namespace NLox
 {
     public static class Interpreter
     {
-        private static readonly Environment env = new Environment();
+        private static Environment env = new Environment();
 
         public static object Interpret(List<Stmt> statements)
         {
@@ -29,22 +29,44 @@ namespace NLox
         {
             if (statement is PrintStmt p)
             {
-                Print(p.expression);
+                Print(p.Expression);
                 return;
             }
-            if (statement is VarStmt s)
+            if (statement is VariableStmt s)
             {
-                object value = s.initializer is null ? null : Evaluate(s.initializer);
+                object value = s.Initializer is null ? null : Evaluate(s.Initializer);
 
-                env.Define(s.name.Lexeme, value);
+                env.Define(s.Name.Lexeme, value);
                 return;
             }
             if (statement is ExpressionStmt e)
             {
-                Discard(e.expression);
+                Discard(e.Expression);
+                return;
+            }
+            if (statement is BlockStmt b)
+            {
+                ExecuteBlock(b.Statements, new Environment(env));
                 return;
             }
             throw new RuntimeException("Unknown statement type.");
+        }
+
+        private static void ExecuteBlock(List<Stmt> statements, Environment environment)
+        {
+            var previous = env;
+            try
+            {
+                env = environment;
+                foreach (var statement in statements)
+                {
+                    Execute(statement);
+                }
+            }
+            finally
+            {
+                env = previous;
+            }
         }
 
         private static void Discard(Expr expression) => Evaluate(expression);
