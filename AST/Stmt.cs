@@ -46,4 +46,18 @@ namespace NLox.AST
             Statements = statements;
         }
     }
+
+    public class ConditionalStmt : Stmt
+    {
+        public readonly Expr Condition;
+        public readonly Stmt ThenBranch;
+        public readonly Stmt ElseBranch;
+
+        public ConditionalStmt(Expr condition, Stmt thenBranch, Stmt elseBranch = null)
+        {
+            Condition = condition;
+            ThenBranch = thenBranch;
+            ElseBranch = elseBranch;
+        }
+    }
 }

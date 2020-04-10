@@ -32,3 +32,18 @@ var c = "global c";
 print a;
 print b;
 print c;
+
+var a = 2 > 1;
+var b = 3 <= 2;
+
+if (a) {
+  print "2 > 1";
+} else {
+  print "impossible!";
+}
+
+if (b) {
+  print "impossible!";
+} else {
+  print "3 > 2!";
+}

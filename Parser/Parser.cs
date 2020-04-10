@@ -59,6 +59,10 @@ namespace NLox
 
         private Stmt Statement()
         {
+            if (Match(TokenType.If))
+            {
+                return ConditionalStatement();
+            }
             if (Match(TokenType.Print))
             {
                 return PrintStatement();
@@ -69,6 +73,22 @@ namespace NLox
             }
 
             return ExpressionStatement();
+        }
+
+        private ConditionalStmt ConditionalStatement()
+        {
+            Consume(TokenType.LeftParen, "Expect '(' after 'if'.");
+            var condition = Expression();
+            Consume(TokenType.RightParen, "Expect ')' after if condition.");
+
+            var thenBranch = Statement();
+            Stmt elseBranch = null;
+            if (Match(TokenType.Else))
+            {
+                elseBranch = Statement();
+            }
+
+            return new ConditionalStmt(condition, thenBranch, elseBranch);
         }
 
         private List<Stmt> Block()

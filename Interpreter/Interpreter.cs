@@ -49,6 +49,18 @@ namespace NLox
                 ExecuteBlock(b.Statements, new Environment(env));
                 return;
             }
+            if (statement is ConditionalStmt c)
+            {
+                if (IsTruthy(Evaluate(c.Condition)))
+                {
+                    Execute(c.ThenBranch);
+                }
+                else
+                {
+                    Execute(c.ElseBranch);
+                }
+                return;
+            }
             throw new RuntimeException("Unknown statement type.");
         }
 
