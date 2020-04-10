@@ -93,8 +93,28 @@ namespace NLox
             UnaryExpr u => Unary(u),
             VarExpr v => env.Get(v.Name),
             AssignmentExpr a => env.Assign(a.Name, Evaluate(a.Value)),
+            LogicalExpr o => Logical(o),
             _ => throw new ArgumentException(nameof(expression))
         };
+
+        private static object Logical(LogicalExpr logical)
+        {
+            var left = Evaluate(logical.Left);
+
+            if (logical.Operator.Type == TokenType.Or)
+            {
+                if (IsTruthy(left))
+                {
+                    return left;
+                }
+            }
+            else if (!IsTruthy(left))
+            {
+                return left;
+            }
+
+            return Evaluate(logical.Right);
+        }
 
         private static object Unary(UnaryExpr unary)
         {

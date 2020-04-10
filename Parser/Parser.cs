@@ -125,7 +125,7 @@ namespace NLox
 
         private Expr Assignment()
         {
-            var expr = Equality();
+            var expr = Or();
 
             if (Match(TokenType.Equal))
             {
@@ -144,6 +144,34 @@ namespace NLox
 
                 // ...or report error.
                 Error(equals, "Invalid assignment target.");
+            }
+
+            return expr;
+        }
+
+        private Expr Or()
+        {
+            var expr = And();
+
+            while (Match(TokenType.Or))
+            {
+                var op = Previous();
+                var right = And();
+                expr = new LogicalExpr(expr, op, right);
+            }
+
+            return expr;
+        }
+
+        private Expr And()
+        {
+            var expr = Equality();
+
+            while (Match(TokenType.And))
+            {
+                var op = Previous();
+                var right = Equality();
+                expr = new LogicalExpr(expr, op, right);
             }
 
             return expr;

@@ -47,3 +47,6 @@ if (b) {
 } else {
   print "3 > 2!";
 }
+
+print nil or "nil is falsey!";
+print "23" or "strings are falsey!";

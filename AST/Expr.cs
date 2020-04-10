@@ -73,4 +73,18 @@ namespace NLox.AST
             Value = value;
         }
     }
+
+    public class LogicalExpr : Expr
+    {
+        public Expr Left { get; }
+        public Expr Right { get; }
+        public Token Operator { get; }
+
+        public LogicalExpr(Expr left, Token op, Expr right)
+        {
+            Left = left;
+            Operator = op;
+            Right = right;
+        }
+    }
 }
