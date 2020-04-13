@@ -59,6 +59,10 @@ namespace NLox
 
         private Stmt Statement()
         {
+            if (Match(TokenType.For))
+            {
+                return ForStatement();
+            }
             if (Match(TokenType.If))
             {
                 return ConditionalStatement();
@@ -77,6 +81,76 @@ namespace NLox
             }
 
             return ExpressionStatement();
+        }
+
+        // Desugaring method that parses _for_ into _while_
+        private Stmt ForStatement()
+        {
+            // Start by eating left parenthesis...
+            Consume(TokenType.LeftParen, "Expect '(' after 'for'.");
+
+            // ...consume initializer, if one is present...
+            Stmt initializer;
+            if (Match(TokenType.Semicolon))
+            {
+                initializer = null;
+            }
+            else if (Match(TokenType.Var))
+            {
+                initializer = VarDeclaration();
+            }
+            else
+            {
+                initializer = ExpressionStatement();
+            }
+
+            // ...consume loop condition, if one is present, and ensure that the semicolon is there...
+            Expr condition = null;
+            if (!Check(TokenType.Semicolon))
+            {
+                condition = Expression();
+            }
+            Consume(TokenType.Semicolon, "Expect ';' after loop condition.");
+
+            // ...ditto for increment...
+            Expr increment = null;
+            if (!Check(TokenType.RightParen))
+            {
+                increment = Expression();
+            }
+            Consume(TokenType.RightParen, "Expect ')' after for clauses.");
+
+            // ...and finally construct a body.
+            var body = Statement();
+
+            // Now the fun begins!
+
+            // If increment was present, we put it a little block with the body,
+            // in order to run increment once after every, well, loop
+            if (increment != null)
+            {
+                body = new BlockStmt(new List<Stmt> { body, new ExpressionStmt(increment) });
+            }
+
+            // If condition was null, make a literal true, so we can get an infinite while
+            if (condition is null)
+            {
+                condition = new LiteralExpr(true);
+            }
+
+            // Now we wrap the body into a while statment, with condition
+            body = new WhileStmt(condition, body);
+
+            // And finally another small block, this time with initializer before body
+            // because initializer should only run once, of course
+            if (initializer != null)
+            {
+                body = new BlockStmt(new List<Stmt> { initializer, body });
+            }
+
+            // And we can return the 'body' which is really full-fledged
+            // while by now.
+            return body;
         }
 
         private WhileStmt WhileStatement()
