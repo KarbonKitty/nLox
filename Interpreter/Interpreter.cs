@@ -61,6 +61,14 @@ namespace NLox
                 }
                 return;
             }
+            if (statement is WhileStmt w)
+            {
+                while (IsTruthy(Evaluate(w.Condition)))
+                {
+                    Execute(w.Body);
+                }
+                return;
+            }
             throw new RuntimeException("Unknown statement type.");
         }
 

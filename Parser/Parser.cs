@@ -67,12 +67,26 @@ namespace NLox
             {
                 return PrintStatement();
             }
+            if (Match(TokenType.While))
+            {
+                return WhileStatement();
+            }
             if (Match(TokenType.LeftBrace))
             {
                 return new BlockStmt(Block());
             }
 
             return ExpressionStatement();
+        }
+
+        private WhileStmt WhileStatement()
+        {
+            Consume(TokenType.LeftParen, "Expect '(' after 'while'.");
+            var condition = Expression();
+            Consume(TokenType.RightParen, "Expect ')' after condition.");
+            var body = Statement();
+
+            return new WhileStmt(condition, body);
         }
 
         private ConditionalStmt ConditionalStatement()

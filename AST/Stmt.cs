@@ -7,7 +7,7 @@ namespace NLox.AST
 
     public class ExpressionStmt : Stmt
     {
-        public readonly Expr Expression;
+        public Expr Expression { get; }
 
         public ExpressionStmt(Expr expression)
         {
@@ -17,7 +17,7 @@ namespace NLox.AST
 
     public class PrintStmt: Stmt
     {
-        public readonly Expr Expression;
+        public Expr Expression { get; }
 
         public PrintStmt(Expr expression)
         {
@@ -27,8 +27,8 @@ namespace NLox.AST
 
     public class VariableStmt : Stmt
     {
-        public readonly Token Name;
-        public readonly Expr Initializer;
+        public Token Name { get; }
+        public Expr Initializer { get; }
 
         public VariableStmt(Token name, Expr initializer)
         {
@@ -39,7 +39,7 @@ namespace NLox.AST
 
     public class BlockStmt : Stmt
     {
-        public readonly List<Stmt> Statements;
+        public List<Stmt> Statements { get; }
 
         public BlockStmt(List<Stmt> statements)
         {
@@ -49,15 +49,27 @@ namespace NLox.AST
 
     public class ConditionalStmt : Stmt
     {
-        public readonly Expr Condition;
-        public readonly Stmt ThenBranch;
-        public readonly Stmt ElseBranch;
+        public Expr Condition { get; }
+        public Stmt ThenBranch { get; }
+        public Stmt ElseBranch { get; }
 
         public ConditionalStmt(Expr condition, Stmt thenBranch, Stmt elseBranch = null)
         {
             Condition = condition;
             ThenBranch = thenBranch;
             ElseBranch = elseBranch;
+        }
+    }
+
+    public class WhileStmt : Stmt
+    {
+        public Expr Condition { get; }
+        public Stmt Body { get; }
+
+        public WhileStmt(Expr condition, Stmt body)
+        {
+            Condition = condition;
+            Body = body;
         }
     }
 }

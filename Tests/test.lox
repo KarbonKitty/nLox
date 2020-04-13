@@ -50,3 +50,10 @@ if (b) {
 
 print nil or "nil is falsey!";
 print "23" or "strings are falsey!";
+
+var a = 2;
+while (a < 5)
+{
+  a = a + 1;
+  print a;
+}
