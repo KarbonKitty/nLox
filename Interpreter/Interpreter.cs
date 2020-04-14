@@ -7,7 +7,16 @@ namespace NLox
 {
     public class Interpreter
     {
-        private Environment env = new Environment();
+        public Environment Globals { get; }
+        private Environment env;
+
+        public Interpreter()
+        {
+            Globals = new Environment();
+            env = Globals;
+
+            Globals.Define("clock", new Clock());
+        }
 
         public object Interpret(List<Stmt> statements)
         {
