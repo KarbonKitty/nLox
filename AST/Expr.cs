@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using NLox.Scanner;
 
 namespace NLox.AST
@@ -85,6 +86,20 @@ namespace NLox.AST
             Left = left;
             Operator = op;
             Right = right;
+        }
+    }
+
+    public class CallExpr : Expr
+    {
+        public Expr Callee { get; }
+        public Token Paren { get; }
+        public List<Expr> Arguments { get; }
+
+        public CallExpr(Expr callee, Token paren, List<Expr> arguments)
+        {
+            Callee = callee;
+            Paren = paren;
+            Arguments = arguments;
         }
     }
 }

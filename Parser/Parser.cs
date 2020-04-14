@@ -330,7 +330,39 @@ namespace NLox
                 return new UnaryExpr(op, right);
             }
 
-            return Primary();
+            return Call();
+        }
+
+        private Expr Call()
+        {
+            var expr = Primary();
+
+            while (Match(TokenType.LeftParen))
+            {
+                expr = FinishCall(expr);
+            }
+
+            return expr;
+        }
+
+        private Expr FinishCall(Expr callee)
+        {
+            var arguments = new List<Expr>();
+            if (!Check(TokenType.RightParen))
+            {
+                do
+                {
+                    if (arguments.Count >= 255)
+                    {
+                        Error(Peek(), "Cannot pass more than 255 arguments to function invocation.");
+                    }
+                    arguments.Add(Expression());
+                } while (Match(TokenType.Comma));
+            }
+
+            var paren = Consume(TokenType.RightParen, "Expect ')' after arguments.");
+
+            return new CallExpr(callee, paren, arguments);
         }
 
         private Expr Primary()

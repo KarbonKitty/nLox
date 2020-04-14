@@ -49,10 +49,11 @@ namespace NLox
             var tokens = scanner.ScanTokens();
             var parser = new Parser(tokens);
             var stmts = parser.Parse();
+            var interpreter = new Interpreter();
 
             if (hadError) return 65;
 
-            Interpreter.Interpret(stmts);
+            interpreter.Interpret(stmts);
 
             if (hadRuntimeError) return 70;
 

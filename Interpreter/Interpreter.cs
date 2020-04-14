@@ -5,11 +5,11 @@ using NLox.Scanner;
 
 namespace NLox
 {
-    public static class Interpreter
+    public class Interpreter
     {
-        private static Environment env = new Environment();
+        private Environment env = new Environment();
 
-        public static object Interpret(List<Stmt> statements)
+        public object Interpret(List<Stmt> statements)
         {
             try
             {
@@ -25,7 +25,7 @@ namespace NLox
             return 0;
         }
 
-        private static void Execute(Stmt statement)
+        private void Execute(Stmt statement)
         {
             if (statement is PrintStmt p)
             {
@@ -72,7 +72,7 @@ namespace NLox
             throw new RuntimeException("Unknown statement type.");
         }
 
-        private static void ExecuteBlock(List<Stmt> statements, Environment environment)
+        private void ExecuteBlock(List<Stmt> statements, Environment environment)
         {
             var previous = env;
             try
@@ -89,13 +89,14 @@ namespace NLox
             }
         }
 
-        private static void Discard(Expr expression) => Evaluate(expression);
+        private void Discard(Expr expression) => Evaluate(expression);
 
-        private static void Print(Expr expression) => Console.WriteLine(Evaluate(expression));
+        private void Print(Expr expression) => Console.WriteLine(Evaluate(expression));
 
-        private static object Evaluate(Expr expression) => expression switch
+        private object Evaluate(Expr expression) => expression switch
         {
             BinaryExpr b => Binary(b),
+            CallExpr c => Call(c),
             GroupingExpr g => Evaluate(g.Expression),
             LiteralExpr l => l.Value,
             UnaryExpr u => Unary(u),
@@ -105,7 +106,27 @@ namespace NLox
             _ => throw new ArgumentException(nameof(expression))
         };
 
-        private static object Logical(LogicalExpr logical)
+        private object Call(CallExpr call)
+        {
+            var callee = Evaluate(call.Callee);
+
+            var arguments = new List<object>();
+            foreach (var argument in call.Arguments)
+            {
+                arguments.Add(Evaluate(argument));
+            }
+
+            ICallable function = callee as ICallable
+                ?? throw new RuntimeException(call.Paren, "Can only call functions and classes.");
+            if (arguments.Count != function.Arity())
+            {
+                throw new RuntimeException(call.Paren,
+                    $"Expected {function.Arity()} arguments but got {arguments.Count} instead.");
+            }
+            return function.Call(this, arguments);
+        }
+
+        private object Logical(LogicalExpr logical)
         {
             var left = Evaluate(logical.Left);
 
@@ -124,11 +145,11 @@ namespace NLox
             return Evaluate(logical.Right);
         }
 
-        private static object Unary(UnaryExpr unary)
+        private object Unary(UnaryExpr unary)
         {
             object right = Evaluate(unary);
 
-            static double TryNegate(Token token, object o)
+            double TryNegate(Token token, object o)
             {
                 var d = CheckTypeUnary<double>(token, o);
                 return -d;
@@ -142,12 +163,12 @@ namespace NLox
             };
         }
 
-        private static object Binary(BinaryExpr binary)
+        private object Binary(BinaryExpr binary)
         {
             object left = Evaluate(binary.Left);
             object right = Evaluate(binary.Right);
 
-            static TResult TryTypeAndOperate<TOperand, TResult>(Token token, object l, object r, Func<TOperand, TOperand, TResult> operation)
+            TResult TryTypeAndOperate<TOperand, TResult>(Token token, object l, object r, Func<TOperand, TOperand, TResult> operation)
             {
                 var (left, right) = CheckTypeBinary<TOperand>(token, l, r);
                 return operation(left, right);
@@ -171,7 +192,7 @@ namespace NLox
             };
         }
 
-        private static bool IsEqual(object l, object r)
+        private bool IsEqual(object l, object r)
         {
             if (l is null && r is null)
             {
@@ -185,14 +206,14 @@ namespace NLox
             return l.Equals(r);
         }
 
-        private static bool IsTruthy(object o) => o switch
+        private bool IsTruthy(object o) => o switch
         {
             null => false,
             bool b => b,
             _ => true
         };
 
-        private static T CheckTypeUnary<T>(Token token, object o)
+        private T CheckTypeUnary<T>(Token token, object o)
         {
             if (o is T ot)
             {
@@ -202,7 +223,7 @@ namespace NLox
             throw new RuntimeException(token, $"Operand must be of type {typeof(T)}.");
         }
 
-        private static (T, T) CheckTypeBinary<T>(Token token, object l, object r)
+        private (T, T) CheckTypeBinary<T>(Token token, object l, object r)
         {
             if (l is T lt && r is T rt)
             {
