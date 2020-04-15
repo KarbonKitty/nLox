@@ -72,4 +72,18 @@ namespace NLox.AST
             Body = body;
         }
     }
+
+    public class FunctionStmt : Stmt
+    {
+        public Token Name { get; }
+        public List<Token> Params { get; }
+        public List<Stmt> Body { get; }
+
+        public FunctionStmt(Token name, List<Token> parameters, List<Stmt> body)
+        {
+            Name = name;
+            Params = parameters;
+            Body = body;
+        }
+    }
 }

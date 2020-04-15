@@ -78,10 +78,16 @@ namespace NLox
                 }
                 return;
             }
+            if (statement is FunctionStmt f)
+            {
+                var fn = new LoxFunction(f);
+                env.Define(f.Name.Lexeme, fn);
+                return;
+            }
             throw new RuntimeException("Unknown statement type.");
         }
 
-        private void ExecuteBlock(List<Stmt> statements, Environment environment)
+        internal void ExecuteBlock(List<Stmt> statements, Environment environment)
         {
             var previous = env;
             try

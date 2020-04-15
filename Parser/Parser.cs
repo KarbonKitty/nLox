@@ -30,6 +30,10 @@ namespace NLox
         {
             try
             {
+                if (Match(TokenType.Fun))
+                {
+                    return Function("function");
+                }
                 if (Match(TokenType.Var))
                 {
                     return VarDeclaration();
@@ -41,6 +45,33 @@ namespace NLox
                 Synchronize();
                 return null;
             }
+        }
+
+        private Stmt Function(string kind)
+        {
+            var name = Consume(TokenType.Identifier, $"Expect {kind} name.");
+            Consume(TokenType.LeftParen, $"Expect '(' after {kind} name.");
+
+            var parameters = new List<Token>();
+            if (!Check(TokenType.RightParen))
+            {
+                do
+                {
+                    if (parameters.Count >= 255)
+                    {
+                        Error(Peek(), $"Cannot have more than 255 {kind} parameters.");
+                    }
+
+                    parameters.Add(Consume(TokenType.Identifier, "Expect parameter name."));
+                } while (Match(TokenType.Comma));
+            }
+
+            Consume(TokenType.RightParen, $"Expect ')' after {kind} parameters.");
+
+            Consume(TokenType.LeftBrace, $"Expect '{{' before {kind} body.");
+            var body = Block();
+
+            return new FunctionStmt(name, parameters, body);
         }
 
         private Stmt VarDeclaration()
