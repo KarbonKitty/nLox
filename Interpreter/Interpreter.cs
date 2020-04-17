@@ -64,7 +64,7 @@ namespace NLox
                 {
                     Execute(c.ThenBranch);
                 }
-                else
+                else if (c.ElseBranch != null)
                 {
                     Execute(c.ElseBranch);
                 }
