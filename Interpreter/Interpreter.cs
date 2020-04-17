@@ -80,7 +80,7 @@ namespace NLox
             }
             if (statement is FunctionStmt f)
             {
-                var fn = new LoxFunction(f);
+                var fn = new LoxFunction(f, env);
                 env.Define(f.Name.Lexeme, fn);
                 return;
             }
