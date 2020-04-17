@@ -102,6 +102,10 @@ namespace NLox
             {
                 return PrintStatement();
             }
+            if (Match(TokenType.Return))
+            {
+                return ReturnStatement();
+            }
             if (Match(TokenType.While))
             {
                 return WhileStatement();
@@ -112,6 +116,19 @@ namespace NLox
             }
 
             return ExpressionStatement();
+        }
+
+        private ReturnStmt ReturnStatement()
+        {
+            var keyword = Previous();
+            Expr value = null;
+            if (!Check(TokenType.Semicolon))
+            {
+                value = Expression();
+            }
+
+            Consume(TokenType.Semicolon, "Expect ';' after return value.");
+            return new ReturnStmt(keyword, value);
         }
 
         // Desugaring method that parses _for_ into _while_

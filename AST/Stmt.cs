@@ -86,4 +86,16 @@ namespace NLox.AST
             Body = body;
         }
     }
+
+    public class ReturnStmt : Stmt
+    {
+        public Token Keyword { get; }
+        public Expr Value { get; }
+
+        public ReturnStmt(Token keyword, Expr value)
+        {
+            Keyword = keyword;
+            Value = value;
+        }
+    }
 }

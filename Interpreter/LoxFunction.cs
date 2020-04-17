@@ -23,7 +23,14 @@ namespace NLox
                 env.Define(Declaration.Params[i].Lexeme, arguments[i]);
             }
 
-            interpreter.ExecuteBlock(Declaration.Body, env);
+            try
+            {
+                interpreter.ExecuteBlock(Declaration.Body, env);
+            }
+            catch (ReturnException r)
+            {
+                return r.Value;
+            }
             return null;
         }
 

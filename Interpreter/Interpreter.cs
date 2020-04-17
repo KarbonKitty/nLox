@@ -84,6 +84,15 @@ namespace NLox
                 env.Define(f.Name.Lexeme, fn);
                 return;
             }
+            if (statement is ReturnStmt r)
+            {
+                object value = null;
+                if (r.Value != null)
+                {
+                    value = Evaluate(r.Value);
+                }
+                throw new ReturnException(value);
+            }
             throw new RuntimeException("Unknown statement type.");
         }
 
