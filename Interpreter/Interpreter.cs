@@ -127,7 +127,7 @@ namespace NLox
             VarExpr v => env.Get(v.Name),
             AssignmentExpr a => env.Assign(a.Name, Evaluate(a.Value)),
             LogicalExpr o => Logical(o),
-            _ => throw new ArgumentException(nameof(expression))
+            _ => throw new ArgumentException("Unknown expression type", nameof(expression))
         };
 
         private object Call(CallExpr call)
