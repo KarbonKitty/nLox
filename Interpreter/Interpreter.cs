@@ -9,6 +9,7 @@ namespace NLox
     {
         public Environment Globals { get; }
         private Environment env;
+        private readonly Dictionary<Expr, int> locals = new Dictionary<Expr, int>();
 
         public Interpreter()
         {
@@ -32,6 +33,11 @@ namespace NLox
                 Program.RuntimeError(rex);
             }
             return 0;
+        }
+
+        public void Resolve(Expr expression, int depth)
+        {
+            locals.Add(expression, depth);
         }
 
         private void Execute(Stmt statement)
@@ -124,11 +130,38 @@ namespace NLox
             GroupingExpr g => Evaluate(g.Expression),
             LiteralExpr l => l.Value,
             UnaryExpr u => Unary(u),
-            VarExpr v => env.Get(v.Name),
-            AssignmentExpr a => env.Assign(a.Name, Evaluate(a.Value)),
+            VarExpr v => LookUpVariable(v.Name, v),
+            AssignmentExpr a => AssignVariable(a),
             LogicalExpr o => Logical(o),
             _ => throw new ArgumentException("Unknown expression type", nameof(expression))
         };
+
+        private object LookUpVariable(Token name, Expr expression)
+        {
+            var local = locals.TryGetValue(expression, out int distance);
+            if (local)
+            {
+                return env.GetAt(distance, name.Lexeme);
+            }
+            else
+            {
+                return Globals.Get(name);
+            }
+        }
+
+        private object AssignVariable(AssignmentExpr assignment)
+        {
+            var val = Evaluate(assignment.Value);
+            var local = locals.TryGetValue(assignment, out int distance);
+            if (local)
+            {
+                return env.AssignAt(distance, assignment.Name, val);
+            }
+            else
+            {
+                return Globals.Assign(assignment.Name, val);
+            }
+        }
 
         private object Call(CallExpr call)
         {

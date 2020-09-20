@@ -7,8 +7,8 @@ namespace NLox
 {
     internal static class Program
     {
-        private static bool hadError = false;
-        private static bool hadRuntimeError = false;
+        private static bool hadError;
+        private static bool hadRuntimeError;
 
         private static int Main(string[] args)
         {
@@ -50,8 +50,13 @@ namespace NLox
             var parser = new Parser(tokens);
             var stmts = parser.Parse();
             var interpreter = new Interpreter();
+            var resolver = new Resolver(interpreter);
 
             if (hadError) return 65;
+
+            resolver.Resolve(stmts);
+
+            if (hadError) return 66;
 
             interpreter.Interpret(stmts);
 
