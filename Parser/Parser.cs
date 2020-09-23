@@ -30,6 +30,10 @@ namespace NLox
         {
             try
             {
+                if (Match(TokenType.Class))
+                {
+                    return ClassDeclaration();
+                }
                 if (Match(TokenType.Fun))
                 {
                     return Function("function");
@@ -47,7 +51,7 @@ namespace NLox
             }
         }
 
-        private Stmt Function(string kind)
+        private FunctionStmt Function(string kind)
         {
             var name = Consume(TokenType.Identifier, $"Expect {kind} name.");
             Consume(TokenType.LeftParen, $"Expect '(' after {kind} name.");
@@ -74,7 +78,7 @@ namespace NLox
             return new FunctionStmt(name, parameters, body);
         }
 
-        private Stmt VarDeclaration()
+        private VariableStmt VarDeclaration()
         {
             var name = Consume(TokenType.Identifier, "Expect variable name.");
 
@@ -86,6 +90,22 @@ namespace NLox
 
             Consume(TokenType.Semicolon, "Expect ';' after variable declaration.");
             return new VariableStmt(name, initializer);
+        }
+
+        private ClassStmt ClassDeclaration()
+        {
+            var name = Consume(TokenType.Identifier, "Expect class name");
+            Consume(TokenType.LeftBrace, "Expect '{' before class body.");
+
+            var methods = new List<FunctionStmt>();
+            while (!Check(TokenType.RightBrace) && !IsAtEnd())
+            {
+                methods.Add(Function("method"));
+            }
+
+            Consume(TokenType.RightBrace, "Expect '}' after class body.");
+
+            return new ClassStmt(name, methods);
         }
 
         private Stmt Statement()

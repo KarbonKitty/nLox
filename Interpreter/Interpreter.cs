@@ -90,6 +90,13 @@ namespace NLox
                 env.Define(f.Name.Lexeme, fn);
                 return;
             }
+            if (statement is ClassStmt cl)
+            {
+                env.Define(cl.Name.Lexeme, null);
+                var cls = new LoxClass(cl.Name.Lexeme);
+                env.Assign(cl.Name, cls);
+                return;
+            }
             if (statement is ReturnStmt r)
             {
                 object value = null;

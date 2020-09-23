@@ -15,7 +15,7 @@ namespace NLox.AST
         }
     }
 
-    public class PrintStmt: Stmt
+    public class PrintStmt : Stmt
     {
         public Expr Expression { get; }
 
@@ -96,6 +96,18 @@ namespace NLox.AST
         {
             Keyword = keyword;
             Value = value;
+        }
+    }
+
+    public class ClassStmt : Stmt
+    {
+        public Token Name { get; }
+        public List<FunctionStmt> Methods { get; }
+
+        public ClassStmt(Token name, List<FunctionStmt> methods)
+        {
+            Name = name;
+            Methods = methods;
         }
     }
 }

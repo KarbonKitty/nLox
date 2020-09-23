@@ -83,6 +83,11 @@ namespace NLox
             {
                 Resolve(print.Expression);
             }
+            else if (statement is ClassStmt cls)
+            {
+                Declare(cls.Name);
+                Define(cls.Name);
+            }
             else
             {
                 // After print statment was forgotten
