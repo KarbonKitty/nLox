@@ -94,3 +94,7 @@ class WorcestershireSauce {
 }
 
 print WorcestershireSauce;
+
+class Donut { }
+var donut = Donut();
+print donut;

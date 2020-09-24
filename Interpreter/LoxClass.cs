@@ -1,6 +1,8 @@
+using System.Collections.Generic;
+
 namespace NLox
 {
-    public class LoxClass
+    public class LoxClass : ICallable
     {
         private string Name { get; }
 
@@ -10,5 +12,9 @@ namespace NLox
         }
 
         public override string ToString() => Name;
+
+        public int Arity() => 0;
+
+        public object Call(Interpreter interpreter, List<object> arguments) => new LoxInstance(this);
     }
 }
