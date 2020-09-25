@@ -137,6 +137,15 @@ namespace NLox
             {
                 Resolve(unary.Right);
             }
+            else if (expression is GetExpr get)
+            {
+                Resolve(get.Object);
+            }
+            else if (expression is SetExpr set)
+            {
+                Resolve(set.Value);
+                Resolve(set.Object);
+            }
         }
 
         private void ResolveFunction(FunctionStmt function, FunctionType type)

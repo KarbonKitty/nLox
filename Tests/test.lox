@@ -98,3 +98,7 @@ print WorcestershireSauce;
 class Donut { }
 var donut = Donut();
 print donut;
+
+donut.glazing = "sugar";
+
+print donut.glazing;

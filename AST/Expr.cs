@@ -102,4 +102,30 @@ namespace NLox.AST
             Arguments = arguments;
         }
     }
+
+    public class GetExpr : Expr
+    {
+        public Expr Object { get; }
+        public Token Name { get; }
+
+        public GetExpr(Expr obj, Token name)
+        {
+            Object = obj;
+            Name = name;
+        }
+    }
+
+    public class SetExpr : Expr
+    {
+        public Expr Object { get; }
+        public Token Name { get; }
+        public Expr Value { get; }
+
+        public SetExpr(Expr obj, Token name, Expr val)
+        {
+            Object = obj;
+            Name = name;
+            Value = val;
+        }
+    }
 }

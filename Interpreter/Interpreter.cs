@@ -140,8 +140,35 @@ namespace NLox
             VarExpr v => LookUpVariable(v.Name, v),
             AssignmentExpr a => AssignVariable(a),
             LogicalExpr o => Logical(o),
+            GetExpr get => GetProperty(get),
+            SetExpr set => SetProperty(set),
             _ => throw new ArgumentException("Unknown expression type", nameof(expression))
         };
+
+        private object SetProperty(SetExpr set)
+        {
+            var obj = Evaluate(set.Object);
+
+            if (obj is not LoxInstance instance)
+            {
+                throw new RuntimeException(set.Name, "Only instances have fields.");
+            }
+
+            var val = Evaluate(set.Value);
+            instance.Set(set.Name, val);
+            return val;
+        }
+
+        private object GetProperty(GetExpr get)
+        {
+            var obj = Evaluate(get.Object);
+            if (obj is LoxInstance instance)
+            {
+                return instance.Get(get.Name);
+            }
+
+            throw new RuntimeException(get.Name, "Only instances have properties.");
+        }
 
         private object LookUpVariable(Token name, Expr expression)
         {

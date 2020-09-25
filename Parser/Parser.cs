@@ -297,6 +297,10 @@ namespace NLox
                     var name = v.Name;
                     return new AssignmentExpr(name, value);
                 }
+                else if (expr is GetExpr g)
+                {
+                    return new SetExpr(g.Object, g.Name, value);
+                }
 
                 // ...or report error.
                 Error(equals, "Invalid assignment target.");
@@ -405,9 +409,21 @@ namespace NLox
         {
             var expr = Primary();
 
-            while (Match(TokenType.LeftParen))
+            while (true)
             {
-                expr = FinishCall(expr);
+                if (Match(TokenType.LeftParen))
+                {
+                    expr = FinishCall(expr);
+                }
+                else if (Match(TokenType.Dot))
+                {
+                    var name = Consume(TokenType.Identifier, "Expect property name after '.'.");
+                    expr = new GetExpr(expr, name);
+                }
+                else
+                {
+                    break;
+                }
             }
 
             return expr;
