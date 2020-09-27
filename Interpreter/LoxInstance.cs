@@ -22,6 +22,13 @@ namespace NLox
                 return value;
             }
 
+            var (hasMethod, method) = cls.FindMethod(name.Lexeme);
+
+            if (hasMethod)
+            {
+                return method;
+            }
+
             throw new RuntimeException(name, $"Undefined property '{name.Lexeme}'.");
         }
 

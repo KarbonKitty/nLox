@@ -93,7 +93,15 @@ namespace NLox
             if (statement is ClassStmt cl)
             {
                 env.Define(cl.Name.Lexeme, null);
-                var cls = new LoxClass(cl.Name.Lexeme);
+
+                var methods = new Dictionary<string, LoxFunction>();
+                foreach (var method in cl.Methods)
+                {
+                    var func = new LoxFunction(method, env);
+                    methods.Add(method.Name.Lexeme, func);
+                }
+
+                var cls = new LoxClass(cl.Name.Lexeme, methods);
                 env.Assign(cl.Name, cls);
                 return;
             }

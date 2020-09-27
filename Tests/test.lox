@@ -102,3 +102,11 @@ print donut;
 donut.glazing = "sugar";
 
 print donut.glazing;
+
+class Bacon {
+  eat() {
+    print "Crunch crunch cruch!";
+  }
+}
+
+Bacon().eat();

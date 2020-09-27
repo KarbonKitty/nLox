@@ -87,6 +87,12 @@ namespace NLox
             {
                 Declare(cls.Name);
                 Define(cls.Name);
+
+                foreach (var method in cls.Methods)
+                {
+                    var declaration = FunctionType.Method;
+                    ResolveFunction(method, declaration);
+                }
             }
             else
             {
