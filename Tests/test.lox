@@ -110,3 +110,14 @@ class Bacon {
 }
 
 Bacon().eat();
+
+class Toast {
+  toString() {
+    print "The " + this.topping + " toast";
+  }
+}
+
+var tomatoToast = Toast();
+tomatoToast.topping = "tomato";
+
+tomatoToast.toString();

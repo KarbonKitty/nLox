@@ -36,6 +36,13 @@ namespace NLox
             return null;
         }
 
+        public LoxFunction Bind(LoxInstance instance)
+        {
+            var env = new Environment(Closure);
+            env.Define("this", instance);
+            return new LoxFunction(Declaration, env);
+        }
+
         public override string ToString() => $"<fn {Declaration.Name.Lexeme}>";
     }
 }

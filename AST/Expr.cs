@@ -128,4 +128,14 @@ namespace NLox.AST
             Value = val;
         }
     }
+
+    public class ThisExpr : Expr
+    {
+        public Token Keyword { get; }
+
+        public ThisExpr(Token keyword)
+        {
+            Keyword = keyword;
+        }
+    }
 }

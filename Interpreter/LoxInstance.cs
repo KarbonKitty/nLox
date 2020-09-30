@@ -26,7 +26,7 @@ namespace NLox
 
             if (hasMethod)
             {
-                return method;
+                return method.Bind(this);
             }
 
             throw new RuntimeException(name, $"Undefined property '{name.Lexeme}'.");

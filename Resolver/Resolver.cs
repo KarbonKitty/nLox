@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using NLox.AST;
 using NLox.Scanner;
 
@@ -10,6 +9,7 @@ namespace NLox
         private readonly Interpreter interpreter;
         private readonly Stack<Dictionary<string, bool>> scopes;
         private FunctionType currentFunction = FunctionType.None;
+        private ClassType currentClass = ClassType.None;
 
         public Resolver(Interpreter interpreter)
         {
@@ -85,14 +85,23 @@ namespace NLox
             }
             else if (statement is ClassStmt cls)
             {
+                var enclosingClass = currentClass;
+                currentClass = ClassType.Class;
+
                 Declare(cls.Name);
                 Define(cls.Name);
+
+                BeginScope();
+                scopes.Peek().Add("this", true);
 
                 foreach (var method in cls.Methods)
                 {
                     var declaration = FunctionType.Method;
                     ResolveFunction(method, declaration);
                 }
+
+                EndScope();
+                currentClass = enclosingClass;
             }
             else
             {
@@ -151,6 +160,15 @@ namespace NLox
             {
                 Resolve(set.Value);
                 Resolve(set.Object);
+            }
+            else if (expression is ThisExpr ths)
+            {
+                if (currentClass == ClassType.None)
+                {
+                    Program.Error(ths.Keyword, "Cannot use 'this' outside of a class.");
+                    return;
+                }
+                ResolveLocal(ths, ths.Keyword);
             }
         }
 

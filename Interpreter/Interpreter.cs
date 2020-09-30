@@ -150,6 +150,7 @@ namespace NLox
             LogicalExpr o => Logical(o),
             GetExpr get => GetProperty(get),
             SetExpr set => SetProperty(set),
+            ThisExpr ths => LookUpVariable(ths.Keyword, ths),
             _ => throw new ArgumentException("Unknown expression type", nameof(expression))
         };
 

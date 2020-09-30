@@ -481,6 +481,11 @@ namespace NLox
                 return new GroupingExpr(expr);
             }
 
+            if (Match(TokenType.This))
+            {
+                return new ThisExpr(Previous());
+            }
+
             throw Error(Peek(), "Expect expression");
         }
 
