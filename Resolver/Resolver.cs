@@ -67,6 +67,10 @@ namespace NLox
 
                 if (returnStmt.Value != null)
                 {
+                    if (currentFunction == FunctionType.Initializer)
+                    {
+                        Program.Error(returnStmt.Keyword, "Cannot return a value from an initializer.");
+                    }
                     Resolve(returnStmt.Value);
                 }
             }
@@ -96,7 +100,7 @@ namespace NLox
 
                 foreach (var method in cls.Methods)
                 {
-                    var declaration = FunctionType.Method;
+                    var declaration = method.Name.Lexeme.Equals(LoxClass.ConstructorName) ? FunctionType.Initializer : FunctionType.Method;
                     ResolveFunction(method, declaration);
                 }
 

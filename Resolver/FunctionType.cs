@@ -4,6 +4,7 @@ namespace NLox
     {
         None,
         Function,
-        Method
+        Method,
+        Initializer
     }
 }

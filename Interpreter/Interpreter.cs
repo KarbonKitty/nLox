@@ -86,7 +86,7 @@ namespace NLox
             }
             if (statement is FunctionStmt f)
             {
-                var fn = new LoxFunction(f, env);
+                var fn = new LoxFunction(f, env, false);
                 env.Define(f.Name.Lexeme, fn);
                 return;
             }
@@ -97,7 +97,7 @@ namespace NLox
                 var methods = new Dictionary<string, LoxFunction>();
                 foreach (var method in cl.Methods)
                 {
-                    var func = new LoxFunction(method, env);
+                    var func = new LoxFunction(method, env, method.Name.Lexeme.Equals(LoxClass.ConstructorName));
                     methods.Add(method.Name.Lexeme, func);
                 }
 

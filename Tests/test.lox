@@ -121,3 +121,30 @@ var tomatoToast = Toast();
 tomatoToast.topping = "tomato";
 
 tomatoToast.toString();
+
+class Hamburger
+{
+    init(topping)
+    {
+        if (topping == "meat")
+        {
+            this.topping = "test";
+            return;
+        }
+        this.topping = topping;
+    }
+
+    eat()
+    {
+        print "Eating a hamburger with " + this.topping;
+    }
+}
+
+var burger = Hamburger("tomato");
+burger.eat();
+
+var anotherBurger = burger.init("cheddar");
+anotherBurger.eat();
+
+var andAnother = burger.init("meat");
+andAnother.eat();

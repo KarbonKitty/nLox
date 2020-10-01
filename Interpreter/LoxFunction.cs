@@ -5,13 +5,15 @@ namespace NLox
 {
     public sealed class LoxFunction : ICallable
     {
+        private bool IsInitializer { get; }
         private FunctionStmt Declaration { get; }
         private Environment Closure { get; }
 
-        public LoxFunction(FunctionStmt declaration, Environment closure)
+        public LoxFunction(FunctionStmt declaration, Environment closure, bool isInitializer)
         {
             Declaration = declaration;
             Closure = closure;
+            IsInitializer = isInitializer;
         }
 
         public int Arity() => Declaration.Params.Count;
@@ -31,8 +33,18 @@ namespace NLox
             }
             catch (ReturnException r)
             {
+                if (IsInitializer)
+                {
+                    return Closure.GetAt(0, "this");
+                }
                 return r.Value;
             }
+
+            if (IsInitializer)
+            {
+                return Closure.GetAt(0, "this");
+            }
+
             return null;
         }
 
@@ -40,7 +52,7 @@ namespace NLox
         {
             var env = new Environment(Closure);
             env.Define("this", instance);
-            return new LoxFunction(Declaration, env);
+            return new LoxFunction(Declaration, env, IsInitializer);
         }
 
         public override string ToString() => $"<fn {Declaration.Name.Lexeme}>";
