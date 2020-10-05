@@ -95,6 +95,14 @@ namespace NLox
         private ClassStmt ClassDeclaration()
         {
             var name = Consume(TokenType.Identifier, "Expect class name");
+
+            VarExpr superclass = null;
+            if (Match(TokenType.Less))
+            {
+                Consume(TokenType.Identifier, "Expect superclass name.");
+                superclass = new VarExpr(Previous());
+            }
+
             Consume(TokenType.LeftBrace, "Expect '{' before class body.");
 
             var methods = new List<FunctionStmt>();
@@ -105,7 +113,7 @@ namespace NLox
 
             Consume(TokenType.RightBrace, "Expect '}' after class body.");
 
-            return new ClassStmt(name, methods);
+            return new ClassStmt(name, superclass, methods);
         }
 
         private Stmt Statement()

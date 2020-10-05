@@ -95,6 +95,16 @@ namespace NLox
                 Declare(cls.Name);
                 Define(cls.Name);
 
+                if (cls.Superclass != null && cls.Name.Lexeme.Equals(cls.Superclass.Name.Lexeme))
+                {
+                    Program.Error(cls.Superclass.Name, "A class cannot inherit from itself.");
+                }
+
+                if (cls.Superclass != null)
+                {
+                    Resolve(cls.Superclass);
+                }
+
                 BeginScope();
                 scopes.Peek().Add("this", true);
 

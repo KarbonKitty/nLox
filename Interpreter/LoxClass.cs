@@ -6,11 +6,13 @@ namespace NLox
     {
         public const string ConstructorName = "init";
         private string Name { get; }
+        private LoxClass Superclass { get; }
         private Dictionary<string, LoxFunction> Methods { get; }
 
-        public LoxClass(string name, Dictionary<string, LoxFunction> methods)
+        public LoxClass(string name, LoxClass superclass, Dictionary<string, LoxFunction> methods)
         {
             Name = name;
+            Superclass = superclass;
             Methods = methods;
         }
 

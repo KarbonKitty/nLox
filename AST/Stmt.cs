@@ -102,11 +102,13 @@ namespace NLox.AST
     public class ClassStmt : Stmt
     {
         public Token Name { get; }
+        public VarExpr Superclass { get; }
         public List<FunctionStmt> Methods { get; }
 
-        public ClassStmt(Token name, List<FunctionStmt> methods)
+        public ClassStmt(Token name, VarExpr superclass, List<FunctionStmt> methods)
         {
             Name = name;
+            Superclass = superclass;
             Methods = methods;
         }
     }

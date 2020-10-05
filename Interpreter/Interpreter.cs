@@ -92,6 +92,20 @@ namespace NLox
             }
             if (statement is ClassStmt cl)
             {
+                LoxClass superclass = null;
+                if (cl.Superclass != null)
+                {
+                    var scls = Evaluate(cl.Superclass);
+                    if (scls is LoxClass super)
+                    {
+                        superclass = super;
+                    }
+                    else
+                    {
+                        throw new RuntimeException(cl.Superclass.Name, "Superclass must be a class.");
+                    }
+                }
+
                 env.Define(cl.Name.Lexeme, null);
 
                 var methods = new Dictionary<string, LoxFunction>();
@@ -101,7 +115,7 @@ namespace NLox
                     methods.Add(method.Name.Lexeme, func);
                 }
 
-                var cls = new LoxClass(cl.Name.Lexeme, methods);
+                var cls = new LoxClass(cl.Name.Lexeme, superclass, methods);
                 env.Assign(cl.Name, cls);
                 return;
             }
