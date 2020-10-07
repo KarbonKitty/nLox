@@ -16,24 +16,34 @@ namespace NLox
             Methods = methods;
         }
 
-        public (bool, LoxFunction) FindMethod(string name)
+        public LoxFunction FindMethod(string name)
         {
             var hasMethod = Methods.TryGetValue(name, out var method);
-            return (hasMethod, method);
+
+            if (hasMethod)
+            {
+                return method;
+            }
+            else if (Superclass is not null)
+            {
+                return Superclass.FindMethod(name);
+            }
+
+            return null;
         }
 
         public int Arity()
         {
-            var (hasInitialier, initializer) = FindMethod(ConstructorName);
-            return hasInitialier ? initializer.Arity() : 0;
+            var initializer = FindMethod(ConstructorName);
+            return initializer is not null ? initializer.Arity() : 0;
         }
 
         public object Call(Interpreter interpreter, List<object> arguments)
         {
             var instance = new LoxInstance(this);
-            var (hasInitializer, initializer) = FindMethod(ConstructorName);
+            var initializer = FindMethod(ConstructorName);
 
-            if (hasInitializer)
+            if (initializer is not null)
             {
                 initializer.Bind(instance).Call(interpreter, arguments);
             }

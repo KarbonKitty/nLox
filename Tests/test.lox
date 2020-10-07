@@ -148,3 +148,15 @@ anotherBurger.eat();
 
 var andAnother = burger.init("meat");
 andAnother.eat();
+
+class Cheeseburger < Hamburger
+{
+  init()
+  {
+    this.topping = "cheese";
+  }
+}
+
+var cheeseburger = Cheeseburger();
+
+cheeseburger.eat();

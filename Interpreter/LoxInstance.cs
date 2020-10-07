@@ -22,9 +22,9 @@ namespace NLox
                 return value;
             }
 
-            var (hasMethod, method) = cls.FindMethod(name.Lexeme);
+            var method = cls.FindMethod(name.Lexeme);
 
-            if (hasMethod)
+            if (method is not null)
             {
                 return method.Bind(this);
             }
