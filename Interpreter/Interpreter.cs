@@ -108,6 +108,12 @@ namespace NLox
 
                 env.Define(cl.Name.Lexeme, null);
 
+                if (cl.Superclass != null)
+                {
+                    env = new Environment(env);
+                    env.Define("super", superclass);
+                }
+
                 var methods = new Dictionary<string, LoxFunction>();
                 foreach (var method in cl.Methods)
                 {
@@ -116,6 +122,12 @@ namespace NLox
                 }
 
                 var cls = new LoxClass(cl.Name.Lexeme, superclass, methods);
+
+                if (cl.Superclass != null)
+                {
+                    env = env.Enclosing;
+                }
+
                 env.Assign(cl.Name, cls);
                 return;
             }
@@ -164,9 +176,28 @@ namespace NLox
             LogicalExpr o => Logical(o),
             GetExpr get => GetProperty(get),
             SetExpr set => SetProperty(set),
+            SuperExpr super => Super(super),
             ThisExpr ths => LookUpVariable(ths.Keyword, ths),
             _ => throw new ArgumentException("Unknown expression type", nameof(expression))
         };
+
+        private object Super(SuperExpr super)
+        {
+            var distance = locals[super];
+            var superclass = (LoxClass)env.GetAt(distance, "super");
+
+            // we know that "this" is always one level closer than "super"
+            var obj = (LoxInstance)env.GetAt(distance - 1, "this");
+
+            var method = superclass.FindMethod(super.Method.Lexeme);
+
+            if (method is null)
+            {
+                throw new RuntimeException(super.Method, $"Undefined property '{super.Method.Lexeme}'.");
+            }
+
+            return method.Bind(obj);
+        }
 
         private object SetProperty(SetExpr set)
         {

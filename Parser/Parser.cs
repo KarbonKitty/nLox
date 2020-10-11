@@ -489,6 +489,14 @@ namespace NLox
                 return new GroupingExpr(expr);
             }
 
+            if (Match(TokenType.Super))
+            {
+                var keyword = Previous();
+                Consume(TokenType.Dot, "Expect '.' after 'super'.");
+                var method = Consume(TokenType.Identifier, "Expect superclass method name.");
+                return new SuperExpr(keyword, method);
+            }
+
             if (Match(TokenType.This))
             {
                 return new ThisExpr(Previous());

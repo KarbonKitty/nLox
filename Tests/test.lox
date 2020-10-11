@@ -160,3 +160,19 @@ class Cheeseburger < Hamburger
 var cheeseburger = Cheeseburger();
 
 cheeseburger.eat();
+
+class Fishburger < Hamburger
+{
+  init(topping)
+  {
+    super.init(topping);
+  }
+
+  eat() {
+    super.eat();
+    print "But with fish!";
+  }
+}
+
+var fishburger = Fishburger("tomato");
+fishburger.eat();

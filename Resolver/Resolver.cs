@@ -102,7 +102,14 @@ namespace NLox
 
                 if (cls.Superclass != null)
                 {
+                    currentClass = ClassType.Subclass;
                     Resolve(cls.Superclass);
+                }
+
+                if (cls.Superclass != null)
+                {
+                    BeginScope();
+                    scopes.Peek()["super"] = true;
                 }
 
                 BeginScope();
@@ -115,6 +122,12 @@ namespace NLox
                 }
 
                 EndScope();
+
+                if (cls.Superclass != null)
+                {
+                    EndScope();
+                }
+
                 currentClass = enclosingClass;
             }
             else
@@ -174,6 +187,18 @@ namespace NLox
             {
                 Resolve(set.Value);
                 Resolve(set.Object);
+            }
+            else if (expression is SuperExpr sup)
+            {
+                if (currentClass == ClassType.None)
+                {
+                    Program.Error(sup.Keyword, "Cannot use 'super' outside of a class.");
+                }
+                else if (currentClass != ClassType.Subclass)
+                {
+                    Program.Error(sup.Keyword, "Cannot use 'super' in a class with no superclass.");
+                }
+                ResolveLocal(sup, sup.Keyword);
             }
             else if (expression is ThisExpr ths)
             {

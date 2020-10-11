@@ -3,6 +3,7 @@ namespace NLox
     public enum ClassType
     {
         None,
-        Class
+        Class,
+        Subclass
     }
 }

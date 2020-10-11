@@ -6,16 +6,16 @@ namespace NLox
     public class Environment
     {
         private readonly Dictionary<string, object> values = new Dictionary<string, object>();
-        private readonly Environment enclosing;
+        public Environment Enclosing { get; }
 
         public Environment()
         {
-            this.enclosing = null;
+            this.Enclosing = null;
         }
 
         public Environment(Environment enclosing)
         {
-            this.enclosing = enclosing;
+            this.Enclosing = enclosing;
         }
 
         public void Define(string name, object value) => values[name] = value;
@@ -26,9 +26,9 @@ namespace NLox
             {
                 return values[name.Lexeme];
             }
-            else if (enclosing != null)
+            else if (Enclosing != null)
             {
-                return enclosing.Get(name);
+                return Enclosing.Get(name);
             }
 
             throw new RuntimeException(name, $"Reading undefined variable '{name.Lexeme}'.");
@@ -47,9 +47,9 @@ namespace NLox
                 return value;
             }
 
-            if (enclosing != null)
+            if (Enclosing != null)
             {
-                return enclosing.Assign(name, value);
+                return Enclosing.Assign(name, value);
             }
 
             throw new RuntimeException(name, $"Assigning to undefined variable '{name.Lexeme}'.");
@@ -66,7 +66,7 @@ namespace NLox
             var environment = this;
             for (int i = 0; i < distance; i++)
             {
-                environment = environment.enclosing;
+                environment = environment.Enclosing;
             }
 
             return environment;

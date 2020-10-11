@@ -138,4 +138,16 @@ namespace NLox.AST
             Keyword = keyword;
         }
     }
+
+    public class SuperExpr : Expr
+    {
+        public Token Keyword { get; }
+        public Token Method { get; }
+
+        public SuperExpr(Token keyword, Token method)
+        {
+            Keyword = keyword;
+            Method = method;
+        }
+    }
 }
